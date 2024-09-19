@@ -1,57 +1,76 @@
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export function BottomView() {
-    const [selected, setSelected] = useState(null); // Keep track of the selected option
+export interface BottomViewProps {
+    // Props
+    isDone: boolean;
+    title: string;
+}
 
-  const handlePress = (value: any) => {
-    setSelected(value); // Update selected radio button
-  };
-  
-    return (
+
+
+export function BottomView({todoList, onHandleEditTodo}: {todoList: BottomViewProps[]; onHandleEditTodo: (value: BottomViewProps[]) => void;}) {
+    if (todoList.length === 0) {
+      return (
         <View style={styles.bottomView}>
-          {/* Component at the bottom of the boundary */}
-          <View style={styles.row}>
-            <Text style={[styles.titleText, {color: '#3f9eff'}]}>
-              Criadas{' '}
-              <View style={[styles.dialogCounter]}>
-                <Text style={styles.normalText}>1</Text>
-              </View>
-            </Text>
-            <Text style={[styles.titleText, {color: '#9e7de5'}]}>
-              Concluídas{' '}
-              <View style={[styles.dialogCounter]}>
-                <Text style={styles.normalText}>1</Text>
-              </View>
-            </Text>
-          </View>
           <View style={styles.collumn}>
-            <View style={styles.dialogBox}>
-              <View style={styles.row}>
-                <TouchableOpacity
-                  style={styles.radioButton}
-                  onPress={() => handlePress('Option 2')}>
-                  <View
-                    style={
-                      selected === 'Option 2'
-                        ? styles.radioButtonSelected
-                        : styles.radioButtonUnselected
-                    }
-                  />
-                </TouchableOpacity>
-                <Text style={styles.normalText}>sdfsdfs sdfs d</Text>
-                <Image
-                  style={[
-                    styles.image,
-                    {width: 30, height: 30, marginRight: 10},
-                  ]}
-                  source={require('../../assets/delete.png')}
-                />
-              </View>
-            </View>
+            <Text style={styles.titleText}>Ainda não tens tarefas registadas</Text>
+            <Text style={[styles.normalText, { textAlign: "center" }]}>
+              Cria tarefas e organiza os teus a fazeres
+            </Text>
           </View>
         </View>
-    );
+      );
+    } else {
+      return (
+            <View style={styles.bottomView}>
+                <View style={styles.row}>
+                    <Text style={[styles.titleText, { color: '#3f9eff' }]}>
+                        Criadas{' '}
+                        <View style={[styles.dialogCounter]}>
+                            <Text style={styles.normalText}>{todoList.length}</Text>
+                        </View>
+                    </Text>
+                    <Text style={[styles.titleText, { color: '#9e7de5' }]}>
+                        Concluídas{' '}
+                        <View style={[styles.dialogCounter]}>
+                            <Text style={styles.normalText}>{todoList.filter(todo => todo.isDone).length}</Text>
+                        </View>
+                    </Text>
+                </View>
+                {todoList.map((todo, index) => (
+                    <>
+                        <View style={styles.collumn}>
+                            <View style={styles.dialogBox}>
+                                <View style={styles.row}>
+                                    <TouchableOpacity
+                                        style={styles.radioButton}
+                                        onPress={() => {
+                                            const updatedTodoList = [...todoList]; // Create a copy of the todoList
+                                            updatedTodoList[index].isDone = !updatedTodoList[index].isDone; // Modify the specific todo
+                                            onHandleEditTodo(updatedTodoList); // Update the state with the new todo list
+                                            console.log(updatedTodoList[index].isDone); // Optional: Log the new state
+                                            }}>
+                                        <View
+                                            style={todoList[index].isDone === true
+                                                ? styles.radioButtonSelected
+                                                : styles.radioButtonUnselected} />
+                                    </TouchableOpacity>
+                                    <Text style={styles.normalText}>{todoList[index].title}</Text>
+                                    <Image
+                                        style={[
+                                            styles.image,
+                                            { width: 30, height: 30, marginRight: 10 },
+                                        ]}
+                                        source={require('../../assets/delete.png')} />
+                                </View>
+                            </View>
+                        </View>
+                    </>
+                ))}
+            </View>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -70,6 +89,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
+      padding: 10,
     },
     dialogCounter: {
       backgroundColor: '#353535',
@@ -98,7 +118,6 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: 30,
     },
     radioButton: {
       marginLeft: 10,
