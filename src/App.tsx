@@ -5,11 +5,17 @@ import { MiddleView } from './components/middlecomponent/MiddleView';
 import { BottomView } from './components/bottomcomponent/BottomView';
 
 export function App() {
+  const [newTodo, setNewTodo] = useState('');
+  
+  function handleNewTodo(newTodo: string) {
+    setNewTodo(newTodo);
+  }
+
     return (
       <View style={styles.container}>
         <TopView />
         <BottomView />
-        <MiddleView/>
+        <MiddleView placeholder='Adiciona uma nova tarefa' onSubmit={handleNewTodo}/>
       </View>
     );
 }

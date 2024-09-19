@@ -1,14 +1,44 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, StyleSheet, Text, TextInput, TouchableHighlight, View } from 'react-native';
 
-export function MiddleView() {
+interface TextInputProps {
+    placeholder: string;
+    onSubmit: (value: string) => void;
+}
+
+export function MiddleView({ placeholder, onSubmit }: TextInputProps) {
+    const [text, setText] = useState('');
+
+    function handleChangeText(value: string) {
+        setText(value);
+    }
+
+    function handleSubmitEditing() {
+        setText(text.trim());
+        if (!text) {
+            return;
+        }
+
+        onSubmit(text);
+        setText('');
+    }
+
     return (
         <View style={[styles.middleComponent]}>
-          <TextInput style={styles.textInput}>Middle Component</TextInput>
+          <TextInput 
+            style={styles.textInput}
+            value={text}
+            autoCorrect={false}
+            placeholder={placeholder}
+            placeholderTextColor="white"
+            clearButtonMode="always"
+            onChangeText={handleChangeText}
+            onSubmitEditing={handleSubmitEditing}
+          />
           <TouchableHighlight
             style={styles.button}
             underlayColor="#3f9eff"
-            onPress={() => {}}>
+            onPress={() => {handleSubmitEditing()}}>
             <Text style={styles.buttonText}>+</Text>
           </TouchableHighlight>
         </View>
